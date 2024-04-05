@@ -17,6 +17,16 @@ namespace VLFM.Services
             _unitOfWork = unitOfWork;        
         }
 
+        public async Task<UserDetails> LoginUser(string Username, string Password)
+        {
+            var user = await _unitOfWork.Users.GetUserbyUsername(Username);
+            if (user != null && user.Password == Password)
+            {
+                return user; // Đăng nhập thành công
+            }
+            return null;
+        }
+
         public async Task<bool> CreateUser(UserDetails userDetails)
         {
             if (userDetails != null)
@@ -69,6 +79,9 @@ namespace VLFM.Services
             }
             return null;
         }
+
+        
+
         public async Task<bool> UpdateUser(UserDetails userDetails)
         {
             if (userDetails != null)

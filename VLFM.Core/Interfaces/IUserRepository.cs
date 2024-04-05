@@ -9,5 +9,6 @@ namespace VLFM.Core.Interfaces
 {
     public interface IUserRepository : IGenericRepository<UserDetails>
     {
+
     }
 }

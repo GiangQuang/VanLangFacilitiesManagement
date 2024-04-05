@@ -10,13 +10,10 @@ namespace VLFM.Services.Interfaces
     public interface IUserService
     {
         Task<bool> CreateUser(UserDetails userDetails);
-
         Task<IEnumerable<UserDetails>> GetAllUsers();
-
         Task<UserDetails> GetUserById(int Id);
-
+        Task<UserDetails> LoginUser(string Username, string Password);
         Task<bool> UpdateUser(UserDetails userDetails);
-
         Task<bool> DeleteUser(int Id);
     }
 }

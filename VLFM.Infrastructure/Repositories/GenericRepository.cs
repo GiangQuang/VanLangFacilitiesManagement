@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using VLFM.Core.Interfaces;
+using VLFM.Core.Models;
 
 namespace VLFM.Infrastructure.Repositories
 {
@@ -24,6 +25,10 @@ namespace VLFM.Infrastructure.Repositories
         {
             return await _dataContext.Set<T>().FindAsync(id);
         }
+        public async Task<UserDetails> GetUserbyUsername(string username)
+        {
+            return await _dataContext.Users.FirstOrDefaultAsync(u => u.Username == username);
+        }
         public async Task Add(T entity)
         {
             await _dataContext.Set<T>().AddAsync(entity);
@@ -36,5 +41,7 @@ namespace VLFM.Infrastructure.Repositories
         {
             _dataContext.Set<T>().Update(entity);
         }
+
+        
     }
 }
