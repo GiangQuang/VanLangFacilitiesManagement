@@ -1,0 +1,26 @@
+﻿using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using VLFM.Core.Models;
+
+namespace VLFM.Infrastructure
+{
+    public class DataContext : DbContext
+    { 
+        public DataContext() { }
+        public DataContext(DbContextOptions<DataContext> options) : base(options)
+        {
+        }
+        public DbSet<UserDetails> Users { get; set; }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer("Server=MSI;Database=facilities-management;User Id=sa;Password=12345;Persist Security Info=True");
+            }
+        }
+    }
+}
