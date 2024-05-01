@@ -14,6 +14,23 @@ namespace VLFM.Controllers
             _userService = userService;
         }
 
+        [HttpPost("Login")]
+        public async Task<IActionResult> LoginUser(LoginRequest request)
+        {
+            var user = await _userService.LoginUser(request.Username, request.Password);
+
+            if (user != null)
+            {
+                // Đăng nhập thành công, trả về thông tin người dùng hoặc token JWT
+                return Ok(user);
+            }
+            else
+            {
+                // Đăng nhập không thành công, trả về mã lỗi hoặc thông báo lỗi
+                return BadRequest("Tên đăng nhập hoặc mật khẩu không chính xác");
+            }
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetUserList()
         {
@@ -36,7 +53,7 @@ namespace VLFM.Controllers
             }
             else
             {
-                return BadRequest();
+                return BadRequest("Người dùng không tồn tại");
             }
         }
 
@@ -87,8 +104,5 @@ namespace VLFM.Controllers
                 return BadRequest();
             }
         }
-
-
-
     }
 }
