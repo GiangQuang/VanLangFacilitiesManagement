@@ -11,7 +11,7 @@ using VLFM.Infrastructure;
 namespace VLFM.Infrastructure.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240404165526_migv1")]
+    [Migration("20240501091812_migv1")]
     partial class migv1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -31,20 +31,24 @@ namespace VLFM.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Fullname")
+                    b.Property<string>("EmployeeID")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(14)
+                        .HasColumnType("nvarchar(14)");
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                    b.Property<int>("Phonenumber")
+                    b.Property<int>("Status")
                         .HasColumnType("int");
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
 
                     b.HasKey("Id");
 

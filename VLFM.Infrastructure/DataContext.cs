@@ -19,7 +19,7 @@ namespace VLFM.Infrastructure
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=MSI;Database=facilities-management;User Id=sa;Password=12345;Persist Security Info=True");
+                optionsBuilder.UseSqlServer("Server=MSI;Database=facilities-managements;User Id=sa;Password=12345;Persist Security Info=True");
             }
         }
     }

@@ -12,7 +12,7 @@ namespace VLFM.Core.Interfaces
     {
         Task<T> GetById(int id);
         Task<IEnumerable<T>> GetAll();
-        Task<UserDetails> GetUserbyUsername(string username);
+        Task<UserDetails> GetUserByUsername(string username);
         Task Add(T entity);
         void Delete(T entity);
         void Update(T entity);

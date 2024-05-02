@@ -5,10 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using VLFM.Core.Models;
 
-namespace VLFM.Core.Interfaces
+namespace VLFM.Services.Interfaces
 {
-    public interface IUserRepository : IGenericRepository<UserDetails>
+    public interface IJwtService
     {
-        
+        string GenerateJwtToken(string Username);
     }
+
 }
