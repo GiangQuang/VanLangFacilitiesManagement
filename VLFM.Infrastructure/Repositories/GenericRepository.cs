@@ -25,7 +25,7 @@ namespace VLFM.Infrastructure.Repositories
         {
             return await _dataContext.Set<T>().FindAsync(id);
         }
-        public async Task<UserDetails> GetUserbyUsername(string username)
+        public async Task<UserDetails> GetUserByUsername(string username)
         {
             return await _dataContext.Users.FirstOrDefaultAsync(u => u.Username == username);
         }

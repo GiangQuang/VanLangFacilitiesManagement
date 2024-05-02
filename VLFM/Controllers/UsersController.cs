@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using VLFM.Core.Models;
+using VLFM.Services;
 using VLFM.Services.Interfaces;
 
 namespace VLFM.Controllers
@@ -9,9 +10,11 @@ namespace VLFM.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
-        public UsersController(IUserService userService) 
+        private readonly IJwtService _jwtService;
+        public UsersController(IUserService userService, IJwtService jwtService) 
         {
             _userService = userService;
+            _jwtService = jwtService;
         }
 
         [HttpPost("Login")]
@@ -22,12 +25,13 @@ namespace VLFM.Controllers
             if (user != null)
             {
                 // Đăng nhập thành công, trả về thông tin người dùng hoặc token JWT
-                return Ok(user);
+                var token = _jwtService.GenerateJwtToken(request.Username);
+                return Ok(new {Token = token});
             }
             else
             {
                 // Đăng nhập không thành công, trả về mã lỗi hoặc thông báo lỗi
-                return BadRequest("Tên đăng nhập hoặc mật khẩu không chính xác");
+                return BadRequest();
             }
         }
 
@@ -53,7 +57,7 @@ namespace VLFM.Controllers
             }
             else
             {
-                return BadRequest("Người dùng không tồn tại");
+                return BadRequest();
             }
         }
 

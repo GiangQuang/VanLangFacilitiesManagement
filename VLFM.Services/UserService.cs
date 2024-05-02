@@ -12,25 +12,31 @@ namespace VLFM.Services
     public class UserService : IUserService
     {
         public IUnitOfWork _unitOfWork;
-        public UserService(IUnitOfWork unitOfWork) 
+        private readonly IPasswordService _passwordService;
+        public UserService(IUnitOfWork unitOfWork, IPasswordService passwordService) 
         {
-            _unitOfWork = unitOfWork;        
+            _unitOfWork = unitOfWork;
+            _passwordService = passwordService;
+
         }
 
         public async Task<UserDetails> LoginUser(string Username, string Password)
         {
-            var user = await _unitOfWork.Users.GetUserbyUsername(Username);
-            if (user != null && user.Password == Password)
+            var hashedPassword = _passwordService.EncryptPassword(Password);
+            var user = await _unitOfWork.Users.GetUserByUsername(Username);
+            if (user != null && user.Password == hashedPassword)
             {
                 return user; // Đăng nhập thành công
             }
             return null;
         }
+        
 
         public async Task<bool> CreateUser(UserDetails userDetails)
         {
             if (userDetails != null)
             {
+                userDetails.Password = _passwordService.EncryptPassword(userDetails.Password);
                 await _unitOfWork.Users.Add(userDetails);
 
                 var result = _unitOfWork.Save();
@@ -86,13 +92,13 @@ namespace VLFM.Services
         {
             if (userDetails != null)
             {
+                var hashedPassword = _passwordService.EncryptPassword(userDetails.Password);
                 var user = await _unitOfWork.Users.GetById(userDetails.Id);
                 if (user != null)
                 {
-                    user.Fullname = userDetails.Fullname;
                     user.Username = userDetails.Username;
-                    user.Password = userDetails.Password;
-                    user.Phonenumber = userDetails.Phonenumber;
+                    user.Password = hashedPassword;
+                    user.Status = userDetails.Status;
 
                     _unitOfWork.Users.Update(user);
 
