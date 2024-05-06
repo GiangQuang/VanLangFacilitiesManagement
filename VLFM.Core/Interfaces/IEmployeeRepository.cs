@@ -3,14 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VLFM.Core.Models;
 
 namespace VLFM.Core.Interfaces
 {
-    public interface IUnitOfWork : IDisposable
+    public interface IEmployeeRepository : IGenericRepository<EmployeeDetails>
     {
-        IUserRepository Users { get; }
-        IEmployeeRepository Employees { get; }
-
-        int Save();
     }
 }
