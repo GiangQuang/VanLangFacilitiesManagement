@@ -5,7 +5,7 @@ using VLFM.Services.Interfaces;
 
 namespace VLFM.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/User")]
     [ApiController]
     public class UsersController : ControllerBase
     {
@@ -24,13 +24,11 @@ namespace VLFM.Controllers
 
             if (user != null)
             {
-                // Đăng nhập thành công, trả về thông tin người dùng hoặc token JWT
                 var token = _jwtService.GenerateJwtToken(request.Username);
                 return Ok(new {Token = token});
             }
             else
             {
-                // Đăng nhập không thành công, trả về mã lỗi hoặc thông báo lỗi
                 return BadRequest();
             }
         }

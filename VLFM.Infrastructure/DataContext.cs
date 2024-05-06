@@ -15,6 +15,7 @@ namespace VLFM.Infrastructure
         {
         }
         public DbSet<UserDetails> Users { get; set; }
+        public DbSet<EmployeeDetails> Employees { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)

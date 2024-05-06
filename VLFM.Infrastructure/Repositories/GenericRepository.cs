@@ -42,6 +42,9 @@ namespace VLFM.Infrastructure.Repositories
             _dataContext.Set<T>().Update(entity);
         }
 
-        
+        public async Task<EmployeeDetails> GetEmployeeByEmployeename(string employeename)
+        {
+            return await _dataContext.Employees.FirstOrDefaultAsync(u => u.Employeename == employeename);
+        }
     }
 }

@@ -12,10 +12,13 @@ namespace VLFM.Infrastructure.Repositories
     {
         private readonly DataContext _dataContext;
         public IUserRepository Users { get; }
-        public UnitOfWork(DataContext dataContext, IUserRepository userRepository) 
+        public IEmployeeRepository Employees { get; }
+
+        public UnitOfWork(DataContext dataContext, IUserRepository userRepository, IEmployeeRepository employeeRepository) 
         { 
             _dataContext = dataContext;
             Users = userRepository;
+            Employees = employeeRepository;
         }
         public int Save()
         {

@@ -26,7 +26,7 @@ namespace VLFM.Services
             var user = await _unitOfWork.Users.GetUserByUsername(Username);
             if (user != null && user.Password == hashedPassword)
             {
-                return user; // Đăng nhập thành công
+                return user; 
             }
             return null;
         }
@@ -85,8 +85,6 @@ namespace VLFM.Services
             }
             return null;
         }
-
-        
 
         public async Task<bool> UpdateUser(UserDetails userDetails)
         {
