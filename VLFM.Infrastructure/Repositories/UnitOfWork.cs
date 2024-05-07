@@ -19,8 +19,8 @@ namespace VLFM.Infrastructure.Repositories
         public IPropertyRepository Properties { get; }
         public IStatusRepository Statuses { get; }
         public IProposeRepository Proposes { get; }
-
         public IProviderRepository Providers { get; }
+        public IReceiptRepository Receipts { get; }
 
         public UnitOfWork(DataContext dataContext, 
             IUserRepository userRepository,
@@ -31,7 +31,8 @@ namespace VLFM.Infrastructure.Repositories
             IPropertyRepository propertyRepository,
             IStatusRepository statusRepository,
             IProposeRepository proposeRepository,
-            IProviderRepository providerRepository)
+            IProviderRepository providerRepository,
+            IReceiptRepository receiptRepository)
         {
             _dataContext = dataContext;
             Users = userRepository;
@@ -43,6 +44,7 @@ namespace VLFM.Infrastructure.Repositories
             Statuses = statusRepository;
             Proposes = proposeRepository;
             Providers = providerRepository;
+            Receipts = receiptRepository;
         }
         public int Save()
         {
