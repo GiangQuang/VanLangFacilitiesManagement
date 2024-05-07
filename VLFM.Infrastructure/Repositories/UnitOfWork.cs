@@ -20,6 +20,8 @@ namespace VLFM.Infrastructure.Repositories
         public IStatusRepository Statuses { get; }
         public IProposeRepository Proposes { get; }
 
+        public IProviderRepository Providers { get; }
+
         public UnitOfWork(DataContext dataContext, 
             IUserRepository userRepository,
             IEmployeeRepository employeeRepository,
@@ -28,7 +30,8 @@ namespace VLFM.Infrastructure.Repositories
             IPropertyTypeRepository propertyTypeRepository,
             IPropertyRepository propertyRepository,
             IStatusRepository statusRepository,
-            IProposeRepository proposeRepository)
+            IProposeRepository proposeRepository,
+            IProviderRepository providerRepository)
         {
             _dataContext = dataContext;
             Users = userRepository;
@@ -39,6 +42,7 @@ namespace VLFM.Infrastructure.Repositories
             Properties = propertyRepository;
             Statuses = statusRepository;
             Proposes = proposeRepository;
+            Providers = providerRepository;
         }
         public int Save()
         {
