@@ -25,6 +25,7 @@ namespace VLFM.Infrastructure.ServiceExtension
             services.AddScoped<IStatusRepository, StatusRepository>();
             services.AddScoped<IProposeRepository, ProposeRepository>();
             services.AddScoped<IProviderRepository, ProviderRepository>();
+            services.AddScoped<IReceiptRepository, ReceiptRepository>();
 
             return services;
         }
