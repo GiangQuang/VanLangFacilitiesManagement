@@ -19,6 +19,7 @@ namespace VLFM.Infrastructure.ServiceExtension
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             services.AddScoped<IBranchRepository, BranchRepository>();
+            services.AddScoped<IDepartmentRepository, DepartmentRepository>();
             return services;
         }
     }
