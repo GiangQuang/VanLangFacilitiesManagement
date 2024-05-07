@@ -27,7 +27,7 @@ namespace VLFM.Controllers
         }
 
         [HttpGet("{Id}")]
-        public async Task<IActionResult> GetStatustyById(int Id)
+        public async Task<IActionResult> GetStatusById(int Id)
         {
             var statusDetails = await _statusService.GetStatusById(Id);
 
