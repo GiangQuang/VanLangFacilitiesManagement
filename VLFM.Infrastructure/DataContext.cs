@@ -21,6 +21,7 @@ namespace VLFM.Infrastructure
         public DbSet<PropertyTypeDetails> PropTypes { get; set; }
         public DbSet<PropertyDetails> Properties { get; set; }
         public DbSet<StatusDetails> Statuses { get; set; }
+        public DbSet<ProposeDetails> Proposes { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)

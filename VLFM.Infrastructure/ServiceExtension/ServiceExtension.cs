@@ -23,6 +23,7 @@ namespace VLFM.Infrastructure.ServiceExtension
             services.AddScoped<IPropertyTypeRepository, PropertyTypeRepository>();
             services.AddScoped<IPropertyRepository, PropertyRepository>();
             services.AddScoped<IStatusRepository, StatusRepository>();
+            services.AddScoped<IProposeRepository, ProposeRepository>();
 
             return services;
         }
