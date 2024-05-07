@@ -13,6 +13,7 @@ namespace VLFM.Core.Interfaces
         IBranchRepository Branches { get; }
         IDepartmentRepository Departments { get; }
         IPropertyTypeRepository PropTypes { get; }
+        IPropertyRepository Properties { get; }
         int Save();
     }
 }
