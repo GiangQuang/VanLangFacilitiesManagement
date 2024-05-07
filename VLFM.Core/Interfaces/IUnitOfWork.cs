@@ -14,6 +14,7 @@ namespace VLFM.Core.Interfaces
         IDepartmentRepository Departments { get; }
         IPropertyTypeRepository PropTypes { get; }
         IPropertyRepository Properties { get; }
+        IStatusRepository Statuses { get; }
         int Save();
     }
 }
