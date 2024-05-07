@@ -14,16 +14,19 @@ namespace VLFM.Infrastructure.Repositories
         public IUserRepository Users { get; }
         public IEmployeeRepository Employees { get; }
         public IBranchRepository Branches { get; }
+        public IDepartmentRepository Departments { get; }
 
         public UnitOfWork(DataContext dataContext, 
             IUserRepository userRepository, 
             IEmployeeRepository employeeRepository,
-            IBranchRepository branchRepository) 
+            IBranchRepository branchRepository,
+            IDepartmentRepository departmentRepository) 
         { 
             _dataContext = dataContext;
             Users = userRepository;
             Employees = employeeRepository;
             Branches = branchRepository;
+            Departments = departmentRepository;
         }
         public int Save()
         {
