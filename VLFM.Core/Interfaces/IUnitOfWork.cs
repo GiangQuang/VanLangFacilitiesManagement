@@ -16,6 +16,7 @@ namespace VLFM.Core.Interfaces
         IPropertyRepository Properties { get; }
         IStatusRepository Statuses { get; }
         IProposeRepository Proposes { get; }
+        IProviderRepository Providers { get; }
         int Save();
     }
 }

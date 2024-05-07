@@ -23,6 +23,7 @@ builder.Services.AddScoped<IPropertyTypeService, PropertyTypeService>();
 builder.Services.AddScoped<IPropertyService, PropertyService>();
 builder.Services.AddScoped<IStatusService, StatusService>();
 builder.Services.AddScoped<IProposeService, ProposeService>();
+builder.Services.AddScoped<IProviderService, ProviderService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddControllers();
