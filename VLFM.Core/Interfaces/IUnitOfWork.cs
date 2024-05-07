@@ -12,6 +12,7 @@ namespace VLFM.Core.Interfaces
         IEmployeeRepository Employees { get; }
         IBranchRepository Branches { get; }
         IDepartmentRepository Departments { get; }
+        IPropertyTypeRepository PropTypes { get; }
         int Save();
     }
 }
