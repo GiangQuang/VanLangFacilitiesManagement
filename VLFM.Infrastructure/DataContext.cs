@@ -19,6 +19,7 @@ namespace VLFM.Infrastructure
         public DbSet<BranchDetails> Branches { get; set; }
         public DbSet<DepartmentDetails> Departments { get; set; }
         public DbSet<PropertyTypeDetails> PropTypes { get; set; }
+        public DbSet<PropertyDetails> Properties { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)

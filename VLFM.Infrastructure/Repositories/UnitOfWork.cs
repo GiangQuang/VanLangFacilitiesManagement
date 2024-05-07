@@ -16,13 +16,15 @@ namespace VLFM.Infrastructure.Repositories
         public IBranchRepository Branches { get; }
         public IDepartmentRepository Departments { get; }
         public IPropertyTypeRepository PropTypes { get; }
+        public IPropertyRepository Properties { get; }
 
         public UnitOfWork(DataContext dataContext, 
             IUserRepository userRepository,
             IEmployeeRepository employeeRepository,
             IBranchRepository branchRepository,
             IDepartmentRepository departmentRepository,
-            IPropertyTypeRepository propertyTypeRepository)
+            IPropertyTypeRepository propertyTypeRepository,
+            IPropertyRepository propertyRepository)
         {
             _dataContext = dataContext;
             Users = userRepository;
@@ -30,6 +32,7 @@ namespace VLFM.Infrastructure.Repositories
             Branches = branchRepository;
             Departments = departmentRepository;
             PropTypes = propertyTypeRepository;
+            Properties = propertyRepository;
         }
         public int Save()
         {
