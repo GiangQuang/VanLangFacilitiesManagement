@@ -27,7 +27,6 @@ namespace VLFM.Services
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:SecretKey"]));
             var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
             int expireDays = Convert.ToInt32(_configuration["Jwt:ExpireDays"]);
-            // Create and publish JWT
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Issuer = _configuration["Jwt:Issuer"],
