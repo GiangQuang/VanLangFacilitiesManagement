@@ -56,11 +56,11 @@ namespace VLFM.Services
         {
             try
             {
-                var rececipts = await _unitOfWork.Receipts.GetAll();
+                var receipts = await _unitOfWork.Receipts.GetAll();
                 var employees = await _unitOfWork.Employees.GetAll();
                 var providers = await _unitOfWork.Providers.GetAll();
 
-                var query = from rec in rececipts
+                var query = from rec in receipts
                             join emp in employees on rec.EmployeeID equals emp.EmployeeID
                             join prov in providers on rec.ProviderID equals prov.ProviderID
                             select new ReceiptResponse
@@ -68,8 +68,8 @@ namespace VLFM.Services
                                 Id = rec.Id,
                                 ReceiptID = rec.ReceiptID,
                                 Date = rec.Date,
-                                EmployeeID = emp.EmployeeID,
-                                ProviderID = prov.ProviderID,
+                                EmployeeID = emp,
+                                ProviderID = prov,
                                 Receiptcode = rec.Receiptcode,
                                 Note = rec.Note
                             };
@@ -85,25 +85,25 @@ namespace VLFM.Services
         {
             if (Id > 0)
             {
-                var rececipts = await _unitOfWork.Receipts.GetById(Id);
+                var receipts = await _unitOfWork.Receipts.GetById(Id);
                 var employees = await _unitOfWork.Employees.GetAll();
                 var providers = await _unitOfWork.Providers.GetAll();
 
-                if (rececipts != null)
+                if (receipts != null)
                 {
                     try
                     {
-                        var employee = employees.FirstOrDefault(emp => emp.EmployeeID == rececipts.EmployeeID);
-                        var provider = providers.FirstOrDefault(prov => prov.ProviderID == rececipts.ProviderID);
+                        var employee = employees.FirstOrDefault(emp => emp.EmployeeID == receipts.EmployeeID);
+                        var provider = providers.FirstOrDefault(prov => prov.ProviderID == receipts.ProviderID);
                         var response = new ReceiptResponse
                         {
-                            Id = rececipts.Id,
-                            ReceiptID = rececipts.ReceiptID,
-                            Date = rececipts.Date,
+                            Id = receipts.Id,
+                            ReceiptID = receipts.ReceiptID,
+                            Date = receipts.Date,
                             EmployeeID = employee,
                             ProviderID = provider,
-                            Receiptcode = rececipts.Receiptcode,
-                            Note = rececipts.Note
+                            Receiptcode = receipts.Receiptcode,
+                            Note = receipts.Note
                         };
 
                         return response;
