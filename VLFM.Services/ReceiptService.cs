@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using VLFM.Core.Interfaces;
 using VLFM.Core.Models;
+using VLFM.Core.Response;
 using VLFM.Services.Interfaces;
 
 namespace VLFM.Services
@@ -51,20 +52,66 @@ namespace VLFM.Services
             return false;
         }
 
-        public async Task<IEnumerable<ReceiptDetails>> GetAllReceipts()
+        public async Task<IEnumerable<ReceiptResponse>> GetAllReceipts()
         {
-            var DetailsList = await _unitOfWork.Receipts.GetAll();
-            return DetailsList;
+            try
+            {
+                var rececipts = await _unitOfWork.Receipts.GetAll();
+                var employees = await _unitOfWork.Employees.GetAll();
+                var providers = await _unitOfWork.Providers.GetAll();
+
+                var query = from rec in rececipts
+                            join emp in employees on rec.EmployeeID equals emp.EmployeeID
+                            join prov in providers on rec.ProviderID equals prov.ProviderID
+                            select new ReceiptResponse
+                            {
+                                Id = rec.Id,
+                                ReceiptID = rec.ReceiptID,
+                                Date = rec.Date,
+                                EmployeeID = emp.EmployeeID,
+                                ProviderID = prov.ProviderID,
+                                Receiptcode = rec.Receiptcode,
+                                Note = rec.Note
+                            };
+                return query.ToList();
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
-        public async Task<ReceiptDetails> GetReceiptById(int Id)
+        public async Task<ReceiptResponse> GetReceiptById(int Id)
         {
             if (Id > 0)
             {
-                var receiptDetails = await _unitOfWork.Receipts.GetById(Id);
-                if (receiptDetails != null)
+                var rececipts = await _unitOfWork.Receipts.GetById(Id);
+                var employees = await _unitOfWork.Employees.GetAll();
+                var providers = await _unitOfWork.Providers.GetAll();
+
+                if (rececipts != null)
                 {
-                    return receiptDetails;
+                    try
+                    {
+                        var employee = employees.FirstOrDefault(emp => emp.EmployeeID == rececipts.EmployeeID);
+                        var provider = providers.FirstOrDefault(prov => prov.ProviderID == rececipts.ProviderID);
+                        var response = new ReceiptResponse
+                        {
+                            Id = rececipts.Id,
+                            ReceiptID = rececipts.ReceiptID,
+                            Date = rececipts.Date,
+                            EmployeeID = employee,
+                            ProviderID = provider,
+                            Receiptcode = rececipts.Receiptcode,
+                            Note = rececipts.Note
+                        };
+
+                        return response;
+                    }
+                    catch (Exception ex)
+                    {
+                        return null;
+                    }
                 }
             }
             return null;

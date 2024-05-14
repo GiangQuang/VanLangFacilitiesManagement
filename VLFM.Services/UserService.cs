@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using VLFM.Core.Interfaces;
 using VLFM.Core.Models;
+using VLFM.Core.Response;
 using VLFM.Services.Interfaces;
 
 namespace VLFM.Services
@@ -67,21 +68,59 @@ namespace VLFM.Services
             }
             return false;
         }
-        public async Task<IEnumerable<UserDetails>> GetAllUsers()
+        public async Task<IEnumerable<UserResponse>> GetAllUsers()
         {
-            var userDetailsList = await _unitOfWork.Users.GetAll();
-            return userDetailsList;
-        }
+            try
+            {
+                var users = await _unitOfWork.Users.GetAll();
+                var employees = await _unitOfWork.Employees.GetAll();
+
+                var query = from us in users
+                            join emp in employees on us.EmployeeID equals emp.EmployeeID
+                            select new UserResponse
+                            {
+                                Id = us.Id,
+                                EmployeeID = emp,
+                                Username = us.Username,
+                                Password = us.Password,
+                                Status = us.Status,
+                            };
+                return query.ToList();
+            }
+            catch (Exception ex)    
+            {
+                return null;
+            }
+        }   
 
 
-        public async Task<UserDetails> GetUserById(int Id)
+        public async Task<UserResponse> GetUserById(int Id)
         {
             if (Id > 0)
             {
-                var userDetails = await _unitOfWork.Users.GetById(Id);
-                if (userDetails != null)
+                var users = await _unitOfWork.Users.GetById(Id);
+                var employees = await _unitOfWork.Employees.GetAll();
+
+                if (users != null)
                 {
-                    return userDetails;
+                    try
+                    {
+                        var employee = employees.FirstOrDefault(emp => emp.EmployeeID == users.EmployeeID);
+                        var response = new UserResponse
+                        {
+                            Id = users.Id,
+                            EmployeeID = employee,
+                            Username = users.Username,
+                            Password = users.Password,
+                            Status = users.Status,
+                        };
+
+                        return response;
+                    }
+                    catch (Exception ex)
+                    {
+                        return null;
+                    }
                 }
             }
             return null;

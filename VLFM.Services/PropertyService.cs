@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using VLFM.Core.Interfaces;
 using VLFM.Core.Models;
+using VLFM.Core.Response;
 using VLFM.Services.Interfaces;
 
 namespace VLFM.Services
@@ -51,20 +52,62 @@ namespace VLFM.Services
             return false;
         }
 
-        public async Task<IEnumerable<PropertyDetails>> GetAllProperties()
+        public async Task<IEnumerable<PropertyResponse>> GetAllProperties()
         {
-            var DetailsList = await _unitOfWork.Properties.GetAll();
-            return DetailsList;
+            try
+            {
+                var properties = await _unitOfWork.Properties.GetAll();
+                var propertyTypes = await _unitOfWork.PropTypes.GetAll();
+
+                var query = from prop in properties
+                            join propty in propertyTypes on prop.PropTypeID equals propty.PropTypeID
+                            select new PropertyResponse
+                            {
+                                Id = prop.Id,
+                                PropertyID = prop.PropertyID,
+                                Propertycode = prop.Propertycode,
+                                PropTypeID = propty,
+                                Propertyname = prop.Propertyname,
+                                Unit = prop.Unit,
+                                Note = prop.Note
+                            };
+                return query.ToList();
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
-        public async Task<PropertyDetails> GetPropertyById(int Id)
+        public async Task<PropertyResponse> GetPropertyById(int Id)
         {
             if (Id > 0)
             {
-                var propertyDetails = await _unitOfWork.Properties.GetById(Id);
-                if (propertyDetails != null)
+                var properties = await _unitOfWork.Properties.GetById(Id);
+                var propertyTypes = await _unitOfWork.PropTypes.GetAll();
+
+                if (properties != null)
                 {
-                    return propertyDetails;
+                    try
+                    {
+                        var propertyType = propertyTypes.FirstOrDefault(propty => propty.PropTypeID == properties.PropTypeID);
+                        var response = new PropertyResponse
+                        {
+                            Id = properties.Id,
+                            PropertyID = properties.PropertyID,
+                            Propertycode = properties.Propertycode,
+                            PropTypeID = propertyType,
+                            Propertyname = properties.Propertyname,
+                            Unit = properties.Unit,
+                            Note = properties.Note
+                        };
+
+                        return response;
+                    }
+                    catch (Exception ex)
+                    {
+                        return null;
+                    }
                 }
             }
             return null;

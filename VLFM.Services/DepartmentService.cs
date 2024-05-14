@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using VLFM.Core.Interfaces;
 using VLFM.Core.Models;
+using VLFM.Core.Response;
 using VLFM.Services.Interfaces;
 
 namespace VLFM.Services
@@ -52,20 +53,57 @@ namespace VLFM.Services
             return false;
         }
 
-        public async Task<IEnumerable<DepartmentDetails>> GetAllDepartments()
+        public async Task<IEnumerable<DepartmentResponse>> GetAllDepartments()
         {
-            var DetailsList = await _unitOfWork.Departments.GetAll();
-            return DetailsList;
+            try {
+                var departments = await _unitOfWork.Departments.GetAll();
+                var branches = await _unitOfWork.Branches.GetAll();
+
+                var query = from de in departments
+                            join br in branches on de.BranchID equals br.BranchID
+                            select new DepartmentResponse
+                            {
+                                Id = de.Id,
+                                DeptID = de.DeptID,
+                                BranchID = br,
+                                Deptname = de.Deptname,
+                                Note = de.Note,
+                            };
+                return query.ToList();
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
-        public async Task<DepartmentDetails> GetDepartmentById(int Id)
+        public async Task<DepartmentResponse> GetDepartmentById(int Id)
         {
             if (Id > 0)
             {
-                var departmentDetails = await _unitOfWork.Departments.GetById(Id);
-                if (departmentDetails != null)
+                var department = await _unitOfWork.Departments.GetById(Id);
+                var branches = await _unitOfWork.Branches.GetAll();
+
+                if (department != null)
                 {
-                    return departmentDetails;
+                    try
+                    {
+                        var branch = branches.FirstOrDefault(br => br.BranchID == department.BranchID);
+                        var response = new DepartmentResponse
+                        {
+                            Id = department.Id,
+                            DeptID = department.DeptID,
+                            BranchID = branch,
+                            Deptname = department.Deptname,
+                            Note = department.Note,
+                        };
+
+                        return response;
+                    }
+                    catch (Exception ex)
+                    {
+                        return null;
+                    }
                 }
             }
             return null;
