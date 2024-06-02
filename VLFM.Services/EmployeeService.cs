@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.IdentityModel.Tokens;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,11 +17,12 @@ namespace VLFM.Services
         {
             _unitOfWork = unitOfWork;
         }
+
+     
         public async Task<bool> CreateEmployee(EmployeeDetails employeeDetails)
         {
-            if (employeeDetails != null)
+            if (employeeDetails != null )
             {
-                employeeDetails.EmployeeID = GenerateEmployeeId();
                 await _unitOfWork.Employees.Add(employeeDetails);
                 var result = _unitOfWork.Save();
 
@@ -32,21 +34,24 @@ namespace VLFM.Services
             return false;
         }
 
-        public async Task<bool> DeleteEmployee(int IDNV)
+        public async Task<bool> DeleteEmployee(List<EmployeeDetails> emps)
         {
-            if (IDNV > 0)
+            if (emps != null && emps.Any())
             {
-                var employeeDetails = await _unitOfWork.Employees.GetById(IDNV);
-                if (employeeDetails != null)
+                foreach (var item in emps)
                 {
-                    _unitOfWork.Employees.Delete(employeeDetails);
-                    var result = _unitOfWork.Save();
 
-                    if (result > 0)
-                        return true;
-                    else
-                        return false;
+                    var employeeDetails = await _unitOfWork.Employees.GetById(item.IDNV);
+                    if (employeeDetails != null)
+                    {
+                        _unitOfWork.Employees.Delete(employeeDetails);
+                    }
                 }
+                var result = _unitOfWork.Save();
+                if (result > 0)
+                    return true;
+                else
+                    return false;
             }
             return false;
         }
@@ -94,11 +99,6 @@ namespace VLFM.Services
                 }
             }
             return false;
-        }
-        private string GenerateEmployeeId()
-        {
-            // Tạo EmployeeID theo định dạng "yyyyMMddHHmmss"
-            return DateTime.Now.ToString("yyyyMMddHHmmss");
         }
     }
 }

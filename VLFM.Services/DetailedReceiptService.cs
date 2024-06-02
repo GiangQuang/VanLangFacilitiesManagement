@@ -21,7 +21,6 @@ namespace VLFM.Services
         {
             if (detailedReceipt != null)
             {
-                detailedReceipt.DtReceiptID = GenerateDtReceiptID();
                 await _unitOfWork.ReceiptsDetailed.Add(detailedReceipt);
                 var result = _unitOfWork.Save();
 
@@ -33,21 +32,23 @@ namespace VLFM.Services
             return false;
         }
 
-        public async Task<bool> DeleteDetailedReceipt(int Id)
+        public async Task<bool> DeleteDetailedReceipt(List<DetailedReceiptResponse> derec)
         {
-            if (Id > 0)
+            if (derec != null && derec.Any())
             {
-                var detailedReceipt = await _unitOfWork.ReceiptsDetailed.GetById(Id);
-                if (detailedReceipt != null)
+                foreach (var item in derec)
                 {
-                    _unitOfWork.ReceiptsDetailed.Delete(detailedReceipt);
-                    var result = _unitOfWork.Save();
-
-                    if (result > 0)
-                        return true;
-                    else
-                        return false;
+                    var detailedReceipt = await _unitOfWork.ReceiptsDetailed.GetById(item.Id);
+                    if (detailedReceipt != null)
+                    {
+                        _unitOfWork.ReceiptsDetailed.Delete(detailedReceipt);
+                    }
                 }
+                var result = _unitOfWork.Save();
+                if (result > 0)
+                    return true;
+                else
+                    return false;
             }
             return false;
         }
@@ -71,15 +72,15 @@ namespace VLFM.Services
                             {
                                 Id = drec.Id,
                                 DtReceiptID = drec.DtReceiptID,
-                                ReceiptID = rec,
-                                PropertyID = prop,
+                                ReceiptID = drec.ReceiptID,
+                                PropertyID = drec.PropertyID,
                                 quantity = drec.quantity,
                                 Price = drec.Price,
                                 Brand = drec.Brand,
                                 WarrantydayAt = drec.WarrantydayAt,
                                 WarrantydayEnd = drec.WarrantydayEnd,
-                                StatusID = sta,
-                                ProposeID = props,
+                                StatusID = drec.StatusID,
+                                ProposeID = drec.ProposeID,
                             };
                 return query.ToList();
             }
@@ -111,15 +112,15 @@ namespace VLFM.Services
                         {
                             Id = detailedreceipts.Id,
                             DtReceiptID = detailedreceipts.DtReceiptID,
-                            ReceiptID = rececipt,
-                            PropertyID = property,
+                            ReceiptID = detailedreceipts.ReceiptID,
+                            PropertyID = detailedreceipts.PropertyID,
                             quantity = detailedreceipts.quantity,
                             Price = detailedreceipts.Price,
                             Brand = detailedreceipts.Brand,
                             WarrantydayAt = detailedreceipts.WarrantydayAt,
                             WarrantydayEnd = detailedreceipts.WarrantydayEnd,
-                            StatusID = status,
-                            ProposeID = propose,
+                            StatusID = detailedreceipts.StatusID,
+                            ProposeID = detailedreceipts.ProposeID,
                         };
 
                         return response;
@@ -140,11 +141,15 @@ namespace VLFM.Services
                 var detailedreceipt = await _unitOfWork.ReceiptsDetailed.GetById(detailedReceipt.Id);
                 if (detailedreceipt != null)
                 {
+                    detailedreceipt.ReceiptID = detailedReceipt.ReceiptID;
+                    detailedreceipt.PropertyID = detailedReceipt.PropertyID;
                     detailedreceipt.quantity = detailedReceipt.quantity;
                     detailedreceipt.Price = detailedReceipt.Price;
                     detailedreceipt.Brand = detailedReceipt.Brand;
                     detailedreceipt.WarrantydayAt = detailedReceipt.WarrantydayAt;
                     detailedreceipt.WarrantydayEnd = detailedReceipt.WarrantydayEnd;
+                    detailedreceipt.StatusID = detailedReceipt.StatusID;
+                    detailedreceipt.ProposeID = detailedReceipt.ProposeID;
                     _unitOfWork.ReceiptsDetailed.Update(detailedreceipt);
                     var result = _unitOfWork.Save();
 
@@ -155,10 +160,6 @@ namespace VLFM.Services
                 }
             }
             return false;
-        }
-        private string GenerateDtReceiptID()
-        {
-            return DateTime.Now.ToString("yyyyMMddHHmmss");
         }
     }
 }

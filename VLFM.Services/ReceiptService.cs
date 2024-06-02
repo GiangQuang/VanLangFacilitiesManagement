@@ -21,7 +21,6 @@ namespace VLFM.Services
         {
             if (receiptDetails != null)
             {
-                receiptDetails.ReceiptID = GenerateReceiptID();
                 await _unitOfWork.Receipts.Add(receiptDetails);
                 var result = _unitOfWork.Save();
 
@@ -33,21 +32,23 @@ namespace VLFM.Services
             return false;
         }
 
-        public async Task<bool> DeleteReceipt(int Id)
+        public async Task<bool> DeleteReceipt(List<ReceiptResponse> rec)
         {
-            if (Id > 0)
+            if (rec != null && rec.Any())
             {
-                var receiptDetails = await _unitOfWork.Receipts.GetById(Id);
-                if (receiptDetails != null)
+                foreach (var item in rec)
                 {
-                    _unitOfWork.Receipts.Delete(receiptDetails);
-                    var result = _unitOfWork.Save();
-
-                    if (result > 0)
-                        return true;
-                    else
-                        return false;
+                    var receiptDetails = await _unitOfWork.Receipts.GetById(item.Id);
+                    if (receiptDetails != null)
+                    {
+                        _unitOfWork.Receipts.Delete(receiptDetails);
+                    }
                 }
+                var result = _unitOfWork.Save();
+                if (result > 0)
+                    return true;
+                else
+                    return false;
             }
             return false;
         }
@@ -68,8 +69,8 @@ namespace VLFM.Services
                                 Id = rec.Id,
                                 ReceiptID = rec.ReceiptID,
                                 Date = rec.Date,
-                                EmployeeID = emp,
-                                ProviderID = prov,
+                                EmployeeID = rec.EmployeeID,
+                                ProviderID = rec.ProviderID,
                                 Receiptcode = rec.Receiptcode,
                                 Note = rec.Note
                             };
@@ -100,8 +101,8 @@ namespace VLFM.Services
                             Id = receipts.Id,
                             ReceiptID = receipts.ReceiptID,
                             Date = receipts.Date,
-                            EmployeeID = employee,
-                            ProviderID = provider,
+                            EmployeeID = receipts.EmployeeID,
+                            ProviderID = receipts.ProviderID,
                             Receiptcode = receipts.Receiptcode,
                             Note = receipts.Note
                         };
@@ -125,6 +126,8 @@ namespace VLFM.Services
                 if (receipt != null)
                 {
                     receipt.Date = receiptDetails.Date;
+                    receipt.EmployeeID = receiptDetails.EmployeeID;
+                    receipt.ProviderID = receiptDetails.ProviderID;
                     receipt.Receiptcode = receiptDetails.Receiptcode;
                     receipt.Note = receiptDetails.Note;
                     _unitOfWork.Receipts.Update(receipt);
@@ -137,11 +140,6 @@ namespace VLFM.Services
                 }
             }
             return false;
-        }
-
-        private string GenerateReceiptID()
-        {
-            return DateTime.Now.ToString("yyyyMMddHHmmss");
         }
     }
 }

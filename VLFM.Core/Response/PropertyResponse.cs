@@ -13,7 +13,7 @@ namespace VLFM.Core.Response
         public int Id { get; set; }
         public string PropertyID { get; set; }
         public string Propertycode { get; set; }
-        public object PropTypeID { get; set; }
+        public string PropTypeID { get; set; }
         public string Propertyname { get; set; }
         public string Unit { get; set; }
         public string Note { get; set; }

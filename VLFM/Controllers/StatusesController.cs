@@ -5,7 +5,7 @@ using VLFM.Services.Interfaces;
 
 namespace VLFM.Controllers
 {
-    [Route("api/Status")]
+    [Route("api/status")]
     [ApiController]
     public class StatusesController : ControllerBase
     {
@@ -23,7 +23,28 @@ namespace VLFM.Controllers
             {
                 return NotFound();
             }
-            return Ok(DetailsList);
+            string StatusID = HttpContext.Request.Query.ContainsKey("StatusID") ? HttpContext.Request.Query["StatusID"].ToString() : null;
+            string Statusname = HttpContext.Request.Query.ContainsKey("Statusname") ? HttpContext.Request.Query["Statusname"].ToString() : null;
+            string Note = HttpContext.Request.Query.ContainsKey("Note") ? HttpContext.Request.Query["Note"].ToString() : null;
+
+            if (!string.IsNullOrEmpty(StatusID))
+            {
+                DetailsList = DetailsList.Where(s => s.StatusID.Contains(StatusID, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+            if (!string.IsNullOrEmpty(Statusname))
+            {
+                DetailsList = DetailsList.Where(s => s.Statusname.Contains(Statusname, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+            if (!string.IsNullOrEmpty(Note))
+            {
+                DetailsList = DetailsList.Where(s => s.Note.Contains(Note, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
+            var responseData = new
+            {
+                data = DetailsList,
+            };
+            return Ok(responseData);
         }
 
         [HttpGet("{Id}")]
@@ -33,7 +54,11 @@ namespace VLFM.Controllers
 
             if (statusDetails != null)
             {
-                return Ok(statusDetails);
+                var responseData = new
+                {
+                    data = statusDetails,
+                };
+                return Ok(responseData);
             }
             else
             {
@@ -56,7 +81,7 @@ namespace VLFM.Controllers
             }
         }
 
-        [HttpPut]
+        [HttpPost("{Id}")]
         public async Task<IActionResult> UpdateStatus(StatusDetails statusDetails)
         {
             if (statusDetails != null)
@@ -74,10 +99,10 @@ namespace VLFM.Controllers
             }
         }
 
-        [HttpDelete("{Id}")]
-        public async Task<IActionResult> DeleteStatus(int Id)
+        [HttpDelete]
+        public async Task<IActionResult> DeleteStatus(List<StatusDetails> sta)
         {
-            var isStatusDeleted = await _statusService.DeleteStatus(Id);
+            var isStatusDeleted = await _statusService.DeleteStatus(sta);
 
             if (isStatusDeleted)
             {

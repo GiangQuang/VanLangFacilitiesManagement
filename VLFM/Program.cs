@@ -13,7 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(
-    "Server=MSI;Database=facilities-managements;User Id=sa;Password=12345;Persist Security Info=True"));
+    "Server=MSI;Database=facilitiesdb;User Id=sa;Password=12345;Persist Security Info=True"));
 builder.Services.AddDIServices();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();

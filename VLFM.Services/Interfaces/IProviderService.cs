@@ -13,6 +13,6 @@ namespace VLFM.Services.Interfaces
         Task<IEnumerable<ProviderDetails>> GetAllProviders();
         Task<ProviderDetails> GetProviderById(int Id);
         Task<bool> UpdateProvider(ProviderDetails providerDetails);
-        Task<bool> DeleteProvider(int Id);
+        Task<bool> DeleteProvider(List<ProviderDetails> prov);
     }
 }

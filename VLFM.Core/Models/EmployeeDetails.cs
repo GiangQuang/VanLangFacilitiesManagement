@@ -16,7 +16,7 @@ namespace VLFM.Core.Models
         public int IDNV { get; set; }
         [Required]
         [StringLength(14)]
-        public string EmployeeID { get; set; }
+        public string EmployeeID { get; set; } = DateTime.Now.ToString("yyyyMMddHHmmss");
         [StringLength(50)]
         public string Employeename { get; set; }
         [RegularExpression(@"^[0-9;]+$")]

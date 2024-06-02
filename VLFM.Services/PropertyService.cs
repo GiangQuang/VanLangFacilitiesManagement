@@ -21,7 +21,6 @@ namespace VLFM.Services
         {
             if (propertyDetails != null)
             {
-                propertyDetails.PropertyID = GeneratePropertyID();
                 await _unitOfWork.Properties.Add(propertyDetails);
                 var result = _unitOfWork.Save();
 
@@ -33,21 +32,24 @@ namespace VLFM.Services
             return false;
         }
 
-        public async Task<bool> DeleteProperty(int Id)
+        public async Task<bool> DeleteProperty(List<PropertyResponse> proper)
         {
-            if (Id > 0)
+            if (proper != null && proper.Any())
             {
-                var propertyDetails = await _unitOfWork.Properties.GetById(Id);
-                if (propertyDetails != null)
+                foreach (var item in proper)
                 {
-                    _unitOfWork.Properties.Delete(propertyDetails);
-                    var result = _unitOfWork.Save();
 
-                    if (result > 0)
-                        return true;
-                    else
-                        return false;
+                    var propertyDetails = await _unitOfWork.Properties.GetById(item.Id);
+                    if (propertyDetails != null)
+                    {
+                        _unitOfWork.Properties.Delete(propertyDetails);
+                    }
                 }
+                var result = _unitOfWork.Save();
+                if (result > 0)
+                    return true;
+                else
+                    return false;
             }
             return false;
         }
@@ -66,7 +68,7 @@ namespace VLFM.Services
                                 Id = prop.Id,
                                 PropertyID = prop.PropertyID,
                                 Propertycode = prop.Propertycode,
-                                PropTypeID = propty,
+                                PropTypeID = prop.PropTypeID,
                                 Propertyname = prop.Propertyname,
                                 Unit = prop.Unit,
                                 Note = prop.Note
@@ -96,7 +98,7 @@ namespace VLFM.Services
                             Id = properties.Id,
                             PropertyID = properties.PropertyID,
                             Propertycode = properties.Propertycode,
-                            PropTypeID = propertyType,
+                            PropTypeID = properties.PropTypeID,
                             Propertyname = properties.Propertyname,
                             Unit = properties.Unit,
                             Note = properties.Note
@@ -117,14 +119,15 @@ namespace VLFM.Services
         {
             if (propertyDetails != null)
             {
-                var propertyType = await _unitOfWork.Properties.GetById(propertyDetails.Id);
-                if (propertyType != null)
+                var property = await _unitOfWork.Properties.GetById(propertyDetails.Id);
+                if (property != null)
                 {
-                    propertyType.Propertycode = propertyDetails.Propertycode; 
-                    propertyType.Propertyname = propertyDetails.Propertyname;
-                    propertyType.Unit = propertyDetails.Unit;
-                    propertyType.Note = propertyDetails.Note;
-                    _unitOfWork.Properties.Update(propertyType);
+                    property.Propertycode = propertyDetails.Propertycode;
+                    property.PropTypeID = propertyDetails.PropTypeID;
+                    property.Propertyname = propertyDetails.Propertyname;
+                    property.Unit = propertyDetails.Unit;
+                    property.Note = propertyDetails.Note;
+                    _unitOfWork.Properties.Update(property);
                     var result = _unitOfWork.Save();
 
                     if (result > 0)
@@ -134,11 +137,6 @@ namespace VLFM.Services
                 }
             }
             return false;
-        }
-
-        private string GeneratePropertyID()
-        {
-            return DateTime.Now.ToString("yyyyMMddHHmmss");
         }
     }
 }

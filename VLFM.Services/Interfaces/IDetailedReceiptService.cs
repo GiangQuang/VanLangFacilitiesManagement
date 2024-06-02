@@ -14,6 +14,6 @@ namespace VLFM.Services.Interfaces
         Task<IEnumerable<DetailedReceiptResponse>> GetAllDetailedReceipts();
         Task<DetailedReceiptResponse> GetDetailedReceiptById(int Id);
         Task<bool> UpdateDetailedReceipt(DetailedReceiptDetails detailedReceipt);
-        Task<bool> DeleteDetailedReceipt(int Id);
+        Task<bool> DeleteDetailedReceipt(List<DetailedReceiptResponse> derec);
     }
 }

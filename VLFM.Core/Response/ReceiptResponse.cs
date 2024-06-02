@@ -13,8 +13,8 @@ namespace VLFM.Core.Response
         public int Id { get; set; }
         public string ReceiptID { get; set; }
         public DateTime Date { get; set; }
-        public object EmployeeID { get; set; }
-        public object ProviderID { get; set; }
+        public string EmployeeID { get; set; }
+        public string ProviderID { get; set; }
         public string Receiptcode { get; set; }
         public string Note { get; set; }
     }

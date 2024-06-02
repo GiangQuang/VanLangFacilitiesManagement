@@ -15,7 +15,9 @@ namespace VLFM.Services
     {
         public IUnitOfWork _unitOfWork;
         private readonly IPasswordService _passwordService;
+
         public UserService(IUnitOfWork unitOfWork, IPasswordService passwordService) 
+
         {
             _unitOfWork = unitOfWork;
             _passwordService = passwordService;
@@ -32,12 +34,16 @@ namespace VLFM.Services
             }
             return null;
         }
-        
 
         public async Task<bool> CreateUser(UserDetails userDetails)
         {
             if (userDetails != null)
             {
+                var existingUser = await _unitOfWork.Users.GetUserByUsername(userDetails.Username);
+                if (existingUser != null)
+                {
+                    return false;
+                }
                 userDetails.Password = _passwordService.EncryptPassword(userDetails.Password);
                 await _unitOfWork.Users.Add(userDetails);
 
@@ -50,21 +56,24 @@ namespace VLFM.Services
             }
             return false;
         }
-        public async Task<bool> DeleteUser(int Id)
+        public async Task<bool> DeleteUser(List<UserResponse> users)
         {
-            if (Id > 0)
+            if (users != null && users.Any())
             {
-                var userDetails = await _unitOfWork.Users.GetById(Id);
-                if (userDetails != null)
+                foreach (var item in users)
                 {
-                    _unitOfWork.Users.Delete(userDetails);
-                    var result = _unitOfWork.Save();
 
+                    var userDetails = await _unitOfWork.Users.GetById(item.Id);
+                    if (userDetails != null)
+                    {
+                        _unitOfWork.Users.Delete(userDetails);
+                    }
+                }
+                    var result = _unitOfWork.Save();
                     if (result > 0)
                         return true;
                     else
                         return false;
-                }
             }
             return false;
         }
@@ -80,7 +89,7 @@ namespace VLFM.Services
                             select new UserResponse
                             {
                                 Id = us.Id,
-                                EmployeeID = emp,
+                                EmployeeID = us.EmployeeID,
                                 Username = us.Username,
                                 Password = us.Password,
                                 Status = us.Status,
@@ -109,7 +118,7 @@ namespace VLFM.Services
                         var response = new UserResponse
                         {
                             Id = users.Id,
-                            EmployeeID = employee,
+                            EmployeeID = users.EmployeeID,
                             Username = users.Username,
                             Password = users.Password,
                             Status = users.Status,
@@ -134,6 +143,7 @@ namespace VLFM.Services
                 var user = await _unitOfWork.Users.GetById(userDetails.Id);
                 if (user != null)
                 {
+                    user.EmployeeID = userDetails.EmployeeID;
                     user.Username = userDetails.Username;
                     user.Password = hashedPassword;
                     user.Status = userDetails.Status;
@@ -149,6 +159,6 @@ namespace VLFM.Services
                 }
             }
             return false;
-        }
+        } 
     }
 }

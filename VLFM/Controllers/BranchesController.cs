@@ -5,7 +5,7 @@ using VLFM.Services.Interfaces;
 
 namespace VLFM.Controllers
 {
-    [Route("api/Branch")]
+    [Route("api/branch")]
     [ApiController]
     public class BranchesController : ControllerBase
     {
@@ -23,7 +23,29 @@ namespace VLFM.Controllers
             {
                 return NotFound();
             }
-            return Ok(DetailsList);
+
+            string BranchID = HttpContext.Request.Query.ContainsKey("BranchID") ? HttpContext.Request.Query["BranchID"].ToString() : null;
+            string Branchname = HttpContext.Request.Query.ContainsKey("Branchname") ? HttpContext.Request.Query["Branchname"].ToString() : null;
+            string Address = HttpContext.Request.Query.ContainsKey("Address") ? HttpContext.Request.Query["Address"].ToString() : null;
+
+            if (!string.IsNullOrEmpty(Branchname))
+            {
+                DetailsList = DetailsList.Where(b => b.Branchname.Contains(Branchname, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+            if (!string.IsNullOrEmpty(BranchID))
+            {
+                DetailsList = DetailsList.Where(b => b.BranchID.Contains(BranchID, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+            if (!string.IsNullOrEmpty(Address))
+            {
+                DetailsList = DetailsList.Where(b => b.Address.Contains(Address, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+            var responseData = new
+            {
+                data = DetailsList,
+            };
+
+            return Ok(responseData);
         }
 
         [HttpGet("{Id}")]
@@ -33,7 +55,8 @@ namespace VLFM.Controllers
 
             if (branchDetails != null)
             {
-                return Ok(branchDetails);
+                var responseData = new { data = branchDetails };
+                return Ok(responseData);
             }
             else
             {
@@ -56,7 +79,7 @@ namespace VLFM.Controllers
             }
         }
 
-        [HttpPut]
+        [HttpPost("{Id}")]
         public async Task<IActionResult> UpdateBranch(BranchDetails branchDetails)
         {
             if (branchDetails != null)
@@ -74,10 +97,10 @@ namespace VLFM.Controllers
             }
         }
 
-        [HttpDelete("{Id}")]
-        public async Task<IActionResult> DeleteBranch(int Id)
+        [HttpDelete]
+        public async Task<IActionResult> DeleteBranch(List<BranchDetails> brs)
         {
-            var isBranchDeleted = await _branchService.DeleteBranch(Id);
+            var isBranchDeleted = await _branchService.DeleteBranch(brs);
 
             if (isBranchDeleted)
             {

@@ -16,9 +16,11 @@ namespace VLFM.Core.Models
         public int Id { get; set; }
         [Required]
         [StringLength(14)]
-        public string BranchID { get; set; }
+        public string BranchID { get; set; } = DateTime.Now.ToString("yyyyMMddHHmmss");
+        [Required]
         [StringLength(50)]
         public string Branchname { get; set; }
+        [Required]
         [StringLength(150)]
         public string Address { get; set; }
     }

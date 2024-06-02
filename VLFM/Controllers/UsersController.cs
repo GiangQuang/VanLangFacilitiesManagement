@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using VLFM.Core.Models;
+using VLFM.Core.Response;
 using VLFM.Services;
 using VLFM.Services.Interfaces;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace VLFM.Controllers
 {
-    [Route("api/User")]
+    [Route("api/user")]
     [ApiController]
     public class UsersController : ControllerBase
     {
@@ -17,7 +19,7 @@ namespace VLFM.Controllers
             _jwtService = jwtService;
         }
 
-        [HttpPost("Login")]
+        [HttpPost("login")]
         public async Task<IActionResult> LoginUser(LoginRequest request)
         {
             var user = await _userService.LoginUser(request.Username, request.Password);
@@ -25,13 +27,32 @@ namespace VLFM.Controllers
             if (user != null)
             {
                 var token = _jwtService.GenerateJwtToken(request.Username);
-                return Ok(new {Token = token});
+                return Ok(new {
+                    username = user.Username,
+                    password = user.Password,
+                    token = token,
+                    status = "ok"
+                });
             }
             else
             {
                 return BadRequest();
             }
         }
+
+        [HttpGet("currentUser")]
+        public async Task<IActionResult> GetCurrentUsers()
+        {
+            var current = new CurrentUserResponse
+            {
+                name = "admin",
+                avatar = "https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg",
+                email = "quang@gmail.com"
+            };
+
+            return Ok(await Task.FromResult(current));
+        }
+
 
         [HttpGet]
         public async Task<IActionResult> GetUserList()
@@ -41,7 +62,32 @@ namespace VLFM.Controllers
             {
                 return NotFound();
             }
-            return Ok(userDetailsList);
+            string EmployeeID = HttpContext.Request.Query.ContainsKey("EmployeeID") ? HttpContext.Request.Query["EmployeeID"].ToString() : null;
+            string Username = HttpContext.Request.Query.ContainsKey("Username") ? HttpContext.Request.Query["Username"].ToString() : null;
+            string Status = HttpContext.Request.Query.ContainsKey("Status") ? HttpContext.Request.Query["Status"].ToString() : null;
+
+            if (!string.IsNullOrEmpty(EmployeeID))
+            {
+                userDetailsList = userDetailsList.Where(u => u.EmployeeID.ToString().Contains(EmployeeID, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+            if (!string.IsNullOrEmpty(Username))
+            {
+                userDetailsList = userDetailsList.Where(u => u.Username.Contains(Username, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+            if (!string.IsNullOrEmpty(Status))
+            {
+                int parsedStatus;
+                if (int.TryParse(Status, out parsedStatus))
+                {
+                    userDetailsList = userDetailsList.Where(u => u.Status == parsedStatus).ToList();
+                }
+            }
+            var responseData = new
+            {
+                data = userDetailsList,
+            };
+
+            return Ok(responseData);
         }
 
         [HttpGet("{Id}")]
@@ -51,7 +97,8 @@ namespace VLFM.Controllers
 
             if (userDetails != null)
             {
-                return Ok(userDetails);
+                var responseData = new { data = userDetails };
+                return Ok(responseData);
             }
             else
             {
@@ -74,8 +121,8 @@ namespace VLFM.Controllers
             }
         }
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateProduct(UserDetails userDetails)
+        [HttpPost("{Id}")]
+        public async Task<IActionResult> UpdateUser(UserDetails userDetails)
         {
             if (userDetails != null)
             {
@@ -92,10 +139,10 @@ namespace VLFM.Controllers
             }
         }
 
-        [HttpDelete("{Id}")]
-        public async Task<IActionResult> DeleteProduct(int Id)
+        [HttpDelete]
+        public async Task<IActionResult> DeleteUser(List<UserResponse> users)
         {
-            var isUserCreated = await _userService.DeleteUser(Id);
+            var isUserCreated = await _userService.DeleteUser(users);
 
             if (isUserCreated)
             {

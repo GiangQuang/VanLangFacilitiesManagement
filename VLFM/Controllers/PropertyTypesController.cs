@@ -5,7 +5,7 @@ using VLFM.Services.Interfaces;
 
 namespace VLFM.Controllers
 {
-    [Route("api/PropertyType")]
+    [Route("api/propertytype")]
     [ApiController]
     public class PropertyTypesController : ControllerBase
     {
@@ -23,7 +23,29 @@ namespace VLFM.Controllers
             {
                 return NotFound();
             }
-            return Ok(DetailsList);
+            string PropTypeID = HttpContext.Request.Query.ContainsKey("PropTypeID") ? HttpContext.Request.Query["PropTypeID"].ToString() : null;
+            string PropTypename = HttpContext.Request.Query.ContainsKey("PropTypename") ? HttpContext.Request.Query["PropTypename"].ToString() : null;
+            string Note = HttpContext.Request.Query.ContainsKey("Note") ? HttpContext.Request.Query["Note"].ToString() : null;
+
+            if (!string.IsNullOrEmpty(PropTypeID))
+            {
+                DetailsList = DetailsList.Where(p => p.PropTypeID.Contains(PropTypeID, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+            if (!string.IsNullOrEmpty(PropTypename))
+            {
+                DetailsList = DetailsList.Where(p => p.PropTypename.Contains(PropTypename, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+            if (!string.IsNullOrEmpty(Note))
+            {
+                DetailsList = DetailsList.Where(p => p.Note.Contains(Note, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
+            var responseData = new
+            {
+                data = DetailsList,
+            };
+
+            return Ok(responseData);
         }
 
         [HttpGet("{Id}")]
@@ -33,7 +55,8 @@ namespace VLFM.Controllers
 
             if (propTypeDetails != null)
             {
-                return Ok(propTypeDetails);
+                var responseData = new { data = propTypeDetails };
+                return Ok(responseData);
             }
             else
             {
@@ -56,7 +79,7 @@ namespace VLFM.Controllers
             }
         }
 
-        [HttpPut]
+        [HttpPost("{Id}")]
         public async Task<IActionResult> UpdatePropType(PropertyTypeDetails propertyTypeDetails)
         {
             if (propertyTypeDetails != null)
@@ -74,10 +97,10 @@ namespace VLFM.Controllers
             }
         }
 
-        [HttpDelete("{Id}")]
-        public async Task<IActionResult> DeletePropType(int Id)
+        [HttpDelete]
+        public async Task<IActionResult> DeletePropType(List<PropertyTypeDetails> propties)
         {
-            var isPropTypeDeleted = await _propertyTypeService.DeletePropType(Id);
+            var isPropTypeDeleted = await _propertyTypeService.DeletePropType(propties);
 
             if (isPropTypeDeleted)
             {

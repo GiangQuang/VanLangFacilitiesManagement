@@ -13,6 +13,6 @@ namespace VLFM.Services.Interfaces
         Task<IEnumerable<ProposeDetails>> GetAllProposes();
         Task<ProposeDetails> GetProposeById(int Id);
         Task<bool> UpdatePropose(ProposeDetails proposeDetails);
-        Task<bool> DeletePropose(int Id);
+        Task<bool> DeletePropose(List<ProposeDetails> prop);
     }
 }

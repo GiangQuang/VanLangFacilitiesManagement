@@ -13,6 +13,6 @@ namespace VLFM.Services.Interfaces
         Task<IEnumerable<BranchDetails>> GetAllBranches();
         Task<BranchDetails> GetBranchById(int Id);
         Task<bool> UpdateBranch(BranchDetails branchDetails);
-        Task<bool> DeleteBranch(int Id);
+        Task<bool> DeleteBranch(List<BranchDetails> brs);
     }
 }

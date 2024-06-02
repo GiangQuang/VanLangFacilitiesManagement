@@ -14,6 +14,6 @@ namespace VLFM.Services.Interfaces
         Task<IEnumerable<PropertyResponse>> GetAllProperties();
         Task<PropertyResponse> GetPropertyById(int Id);
         Task<bool> UpdateProperty(PropertyDetails propertyDetails);
-        Task<bool> DeleteProperty(int Id);
+        Task<bool> DeleteProperty(List<PropertyResponse> proper);
     }
 }
