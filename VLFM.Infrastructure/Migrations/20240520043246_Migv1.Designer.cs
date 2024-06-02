@@ -12,8 +12,8 @@ using VLFM.Infrastructure;
 namespace VLFM.Infrastructure.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240514170050_Migv10")]
-    partial class Migv10
+    [Migration("20240520043246_Migv1")]
+    partial class Migv1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

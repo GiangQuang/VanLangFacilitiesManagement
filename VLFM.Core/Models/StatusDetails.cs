@@ -16,7 +16,7 @@ namespace VLFM.Core.Models
         public int Id { get; set; }
         [Required]
         [StringLength(14)]
-        public string StatusID { get; set; }
+        public string StatusID { get; set; } = DateTime.Now.ToString("yyyyMMddHHmmss");
         [Required]
         [StringLength(50)]
         public string Statusname { get; set; }

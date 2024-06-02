@@ -21,7 +21,6 @@ namespace VLFM.Services
         {
             if (statusDetails != null)
             {
-                statusDetails.StatusID = GenerateStatusID();
                 await _unitOfWork.Statuses.Add(statusDetails);
                 var result = _unitOfWork.Save();
 
@@ -33,21 +32,24 @@ namespace VLFM.Services
             return false;
         }
 
-        public async Task<bool> DeleteStatus(int Id)
+        public async Task<bool> DeleteStatus(List<StatusDetails> sta)
         {
-            if (Id > 0)
+            if (sta != null && sta.Any())
             {
-                var statusDetails = await _unitOfWork.Statuses.GetById(Id);
-                if (statusDetails != null)
+                foreach (var item in sta)
                 {
-                    _unitOfWork.Statuses.Delete(statusDetails);
-                    var result = _unitOfWork.Save();
 
-                    if (result > 0)
-                        return true;
-                    else
-                        return false;
+                    var statusDetails = await _unitOfWork.Statuses.GetById(item.Id);
+                    if (statusDetails != null)
+                    {
+                        _unitOfWork.Statuses.Delete(statusDetails);
+                    }
                 }
+                var result = _unitOfWork.Save();
+                if (result > 0)
+                    return true;
+                else
+                    return false;
             }
             return false;
         }
@@ -90,11 +92,6 @@ namespace VLFM.Services
                 }
             }
             return false;
-        }
-
-        private string GenerateStatusID()
-        {
-            return DateTime.Now.ToString("yyyyMMddHHmmss"); 
         }
     }
 }

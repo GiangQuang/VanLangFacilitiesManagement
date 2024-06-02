@@ -15,7 +15,7 @@ namespace VLFM.Core.Models
         public int Id { get; set; }
         [Required]
         [StringLength(14)]
-        public string ProviderID { get; set; }
+        public string ProviderID { get; set; } = DateTime.Now.ToString("yyyyMMddHHmmss");
         [Required]
         [StringLength(50)]
         public string Providername { get; set; }

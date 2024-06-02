@@ -13,6 +13,6 @@ namespace VLFM.Services.Interfaces
         Task<IEnumerable<PropertyTypeDetails>> GetAllPropTypes();
         Task<PropertyTypeDetails> GetPropTypeById(int Id);
         Task<bool> UpdatePropType(PropertyTypeDetails propertyTypeDetails);
-        Task<bool> DeletePropType(int Id);
+        Task<bool> DeletePropType(List<PropertyTypeDetails> propties);
     }
 }

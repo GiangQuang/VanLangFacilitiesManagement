@@ -22,7 +22,6 @@ namespace VLFM.Services
         {
             if (departmentDetails != null)
             {
-                departmentDetails.DeptID = GenerateDeptID();
                 await _unitOfWork.Departments.Add(departmentDetails);
                 var result = _unitOfWork.Save();
 
@@ -34,21 +33,23 @@ namespace VLFM.Services
             return false;
         }
 
-        public async Task<bool> DeleteDepartment(int Id)
+        public async Task<bool> DeleteDepartment(List<DepartmentResponse> depts)
         {
-            if (Id > 0)
+            if (depts != null && depts.Any())
             {
-                var departmentDetails = await _unitOfWork.Departments.GetById(Id);
-                if (departmentDetails != null)
+                foreach (var item in depts)
                 {
-                    _unitOfWork.Departments.Delete(departmentDetails);
-                    var result = _unitOfWork.Save();
-
-                    if (result > 0)
-                        return true;
-                    else
-                        return false;
+                    var departmentDetails = await _unitOfWork.Departments.GetById(item.Id);
+                    if (departmentDetails != null)
+                    {
+                        _unitOfWork.Departments.Delete(departmentDetails);
+                    }
                 }
+                var result = _unitOfWork.Save();
+                if (result > 0)
+                    return true;
+                else
+                    return false;
             }
             return false;
         }
@@ -65,7 +66,7 @@ namespace VLFM.Services
                             {
                                 Id = de.Id,
                                 DeptID = de.DeptID,
-                                BranchID = br,
+                                BranchID = de.BranchID,
                                 Deptname = de.Deptname,
                                 Note = de.Note,
                             };
@@ -93,11 +94,10 @@ namespace VLFM.Services
                         {
                             Id = department.Id,
                             DeptID = department.DeptID,
-                            BranchID = branch,
+                            BranchID = department.DeptID,
                             Deptname = department.Deptname,
                             Note = department.Note,
                         };
-
                         return response;
                     }
                     catch (Exception ex)
@@ -116,6 +116,7 @@ namespace VLFM.Services
                 var dept = await _unitOfWork.Departments.GetById(departmentDetails.Id);
                 if (dept != null)
                 {
+                    dept.BranchID = departmentDetails.BranchID;
                     dept.Deptname = departmentDetails.Deptname;
                     dept.Note = departmentDetails.Note;
 
@@ -130,11 +131,6 @@ namespace VLFM.Services
                 }
             }
             return false;
-        }
-
-        private string GenerateDeptID()
-        {
-            return DateTime.Now.ToString("yyyyMMddHHmmss");
         }
     }
 }

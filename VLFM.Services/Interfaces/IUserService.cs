@@ -14,7 +14,8 @@ namespace VLFM.Services.Interfaces
         Task<IEnumerable<UserResponse>> GetAllUsers();
         Task<UserResponse> GetUserById(int Id);
         Task<UserDetails> LoginUser(string Username, string Password);
+        /*Task<UserResponse> GetCurrentUser();*/
         Task<bool> UpdateUser(UserDetails userDetails);
-        Task<bool> DeleteUser(int Id);
+        Task<bool> DeleteUser(List<UserResponse> users);
     }
 }

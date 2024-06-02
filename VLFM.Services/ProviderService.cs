@@ -21,7 +21,6 @@ namespace VLFM.Services
         {
             if (providerDetails != null)
             {
-                providerDetails.ProviderID = GenerateProviderID();
                 await _unitOfWork.Providers.Add(providerDetails);
                 var result = _unitOfWork.Save();
 
@@ -33,21 +32,24 @@ namespace VLFM.Services
             return false;
         }
 
-        public async Task<bool> DeleteProvider(int Id)
+        public async Task<bool> DeleteProvider(List<ProviderDetails> prov)
         {
-            if (Id > 0)
+            if (prov != null && prov.Any())
             {
-                var providerDetails = await _unitOfWork.Providers.GetById(Id);
-                if (providerDetails != null)
+                foreach (var item in prov)
                 {
-                    _unitOfWork.Providers.Delete(providerDetails);
-                    var result = _unitOfWork.Save();
 
-                    if (result > 0)
-                        return true;
-                    else
-                        return false;
+                    var providerDetails = await _unitOfWork.Providers.GetById(item.Id);
+                    if (providerDetails != null)
+                    {
+                        _unitOfWork.Providers.Delete(providerDetails);
+                    }
                 }
+                var result = _unitOfWork.Save();
+                if (result > 0)
+                    return true;
+                else
+                    return false;
             }
             return false;
         }
@@ -91,11 +93,6 @@ namespace VLFM.Services
                 }
             }
             return false;
-        }
-
-        private string GenerateProviderID()
-        {
-            return DateTime.Now.ToString("yyyyMMddHHmmss");
         }
     }
 }

@@ -12,7 +12,7 @@ namespace VLFM.Core.Response
     public class UserResponse
     {
         public int Id { get; set; }
-        public object EmployeeID { get; set; }
+        public string EmployeeID { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
         public int Status { get; set; }

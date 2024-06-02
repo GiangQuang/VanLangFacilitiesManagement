@@ -12,14 +12,14 @@ namespace VLFM.Core.Response
     {
         public int Id { get; set; }
         public string DtReceiptID { get; set; }
-        public object ReceiptID { get; set; }
-        public object PropertyID { get; set; }
+        public string ReceiptID { get; set; }
+        public string PropertyID { get; set; }
         public decimal quantity { get; set; }
         public int Price { get; set; }
         public string Brand { get; set; }
         public DateTime WarrantydayAt { get; set; }
         public DateTime WarrantydayEnd { get; set; }
-        public object StatusID { get; set; }
-        public object ProposeID { get; set; }
+        public string StatusID { get; set; }
+        public string ProposeID { get; set; }
     }
 }

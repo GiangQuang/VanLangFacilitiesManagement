@@ -20,7 +20,6 @@ namespace VLFM.Services
         {
             if (branchDetails != null)
             {
-                branchDetails.BranchID = GenerateBranchID();
                 await _unitOfWork.Branches.Add(branchDetails);
                 var result = _unitOfWork.Save();
 
@@ -32,21 +31,24 @@ namespace VLFM.Services
             return false;
         }
 
-        public async Task<bool> DeleteBranch(int Id)
+        public async Task<bool> DeleteBranch(List<BranchDetails> brs)
         {
-            if (Id > 0)
+            if (brs != null && brs.Any())
             {
-                var branchDetails = await _unitOfWork.Branches.GetById(Id);
-                if (branchDetails != null)
+                foreach (var item in brs)
                 {
-                    _unitOfWork.Branches.Delete(branchDetails);
-                    var result = _unitOfWork.Save();
 
-                    if (result > 0)
-                        return true;
-                    else
-                        return false;
+                    var branchDetails = await _unitOfWork.Branches.GetById(item.Id);
+                    if (branchDetails != null)
+                    {
+                        _unitOfWork.Branches.Delete(branchDetails);
+                    }
                 }
+                var result = _unitOfWork.Save();
+                if (result > 0)
+                    return true;
+                else
+                    return false;
             }
             return false;
         }
@@ -91,12 +93,6 @@ namespace VLFM.Services
                 }
             }
             return false;
-        }
-
-        private string GenerateBranchID()
-        {
-            // Tạo EmployeeID theo định dạng "yyyyMMddHHmmss"
-            return DateTime.Now.ToString("yyyyMMddHHmmss");
         }
     }
 }

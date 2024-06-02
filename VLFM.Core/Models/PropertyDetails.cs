@@ -15,7 +15,7 @@ namespace VLFM.Core.Models
         public int Id { get; set; }
         [Required]
         [StringLength(14)]
-        public string PropertyID { get; set; }
+        public string PropertyID { get; set; } = DateTime.Now.ToString("yyyyMMddHHmmss");
         [StringLength(14)]
         public string Propertycode { get; set; }
         [Required]

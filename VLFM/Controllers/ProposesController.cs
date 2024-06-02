@@ -5,7 +5,7 @@ using VLFM.Services.Interfaces;
 
 namespace VLFM.Controllers
 {
-    [Route("api/Propose")]
+    [Route("api/propose")]
     [ApiController]
     public class ProposesController : ControllerBase
     {
@@ -23,7 +23,27 @@ namespace VLFM.Controllers
             {
                 return NotFound();
             }
-            return Ok(DetailsList);
+            string ProposeID = HttpContext.Request.Query.ContainsKey("ProposeID") ? HttpContext.Request.Query["ProposeID"].ToString() : null;
+            string Proposename = HttpContext.Request.Query.ContainsKey("Proposename") ? HttpContext.Request.Query["Proposename"].ToString() : null;
+            string Note = HttpContext.Request.Query.ContainsKey("Note") ? HttpContext.Request.Query["Note"].ToString() : null;
+
+            if (!string.IsNullOrEmpty(ProposeID))
+            {
+                DetailsList = DetailsList.Where(s => s.ProposeID.Contains(ProposeID, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+            if (!string.IsNullOrEmpty(Proposename))
+            {
+                DetailsList = DetailsList.Where(s => s.Proposename.Contains(Proposename, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+            if (!string.IsNullOrEmpty(Note))
+            {
+                DetailsList = DetailsList.Where(s => s.Note.Contains(Note, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+            var responseData = new
+            {
+                data = DetailsList,
+            };
+            return Ok(responseData);
         }
 
         [HttpGet("{Id}")]
@@ -33,7 +53,11 @@ namespace VLFM.Controllers
 
             if (proposeDetails != null)
             {
-                return Ok(proposeDetails);
+                var responseData = new
+                {
+                    data = proposeDetails,
+                };
+                return Ok(responseData);
             }
             else
             {
@@ -56,7 +80,7 @@ namespace VLFM.Controllers
             }
         }
 
-        [HttpPut]
+        [HttpPost("{Id}")]
         public async Task<IActionResult> UpdatePropose(ProposeDetails proposeDetails)
         {
             if (proposeDetails != null)
@@ -74,10 +98,10 @@ namespace VLFM.Controllers
             }
         }
 
-        [HttpDelete("{Id}")]
-        public async Task<IActionResult> DeletePropose(int Id)
+        [HttpDelete]
+        public async Task<IActionResult> DeletePropose(List<ProposeDetails> prop)
         {
-            var isProposeDeleted = await _proposeService.DeletePropose(Id);
+            var isProposeDeleted = await _proposeService.DeletePropose(prop);
 
             if (isProposeDeleted)
             {

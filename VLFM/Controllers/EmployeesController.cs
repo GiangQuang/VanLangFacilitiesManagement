@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Xml.Linq;
 using VLFM.Core.Models;
 using VLFM.Services;
 using VLFM.Services.Interfaces;
 
 namespace VLFM.Controllers
 {
-    [Route("api/Employee")]
+    [Route("api/employee")]
     [ApiController]
     public class EmployeesController : ControllerBase
     {
@@ -23,7 +25,51 @@ namespace VLFM.Controllers
             {
                 return NotFound();
             }
-            return Ok(DetailsList);
+            string EmployeeID = HttpContext.Request.Query.ContainsKey("EmployeeID") ? HttpContext.Request.Query["EmployeeID"].ToString() : null;
+            string Employeename = HttpContext.Request.Query.ContainsKey("Employeename") ? HttpContext.Request.Query["Employeename"].ToString() : null;
+            string Phonenumber = HttpContext.Request.Query.ContainsKey("Phonenumber") ? HttpContext.Request.Query["Phonenumber"].ToString() : null;
+            string Dateofbirth = HttpContext.Request.Query.ContainsKey("Dateofbirth") ? HttpContext.Request.Query["Dateofbirth"].ToString() : null;
+            string Address = HttpContext.Request.Query.ContainsKey("Address") ? HttpContext.Request.Query["Address"].ToString() : null;
+            string Status = HttpContext.Request.Query.ContainsKey("Status") ? HttpContext.Request.Query["Status"].ToString() : null;
+            if (!string.IsNullOrEmpty(EmployeeID))
+            {
+                DetailsList = DetailsList.Where(e => e.EmployeeID.Contains(EmployeeID, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+            if (!string.IsNullOrEmpty(Employeename))
+            {
+                DetailsList = DetailsList.Where(e => e.Employeename.Contains(Employeename, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+            if (!string.IsNullOrEmpty(Phonenumber))
+            {
+                DetailsList = DetailsList.Where(e => e.Phonenumber.Contains(Phonenumber, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+            if (!string.IsNullOrEmpty(Dateofbirth))
+            {
+                DateTime parsedDateOfBirth;
+                if (DateTime.TryParse(Dateofbirth, out parsedDateOfBirth))
+                {
+                    DetailsList = DetailsList.Where(e => e.Dateofbirth == parsedDateOfBirth).ToList();
+                }
+            }
+            if (!string.IsNullOrEmpty(Address))
+            {
+                DetailsList = DetailsList.Where(e => e.Address.Contains(Address, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+            if (!string.IsNullOrEmpty(Status))
+            {
+                int parsedStatus;
+                if (int.TryParse(Status, out parsedStatus))
+                {
+                    DetailsList = DetailsList.Where(e => e.Status == parsedStatus).ToList();
+                }
+            }
+
+            var responseData = new
+            {
+                data = DetailsList,
+            };
+
+            return Ok(responseData);
         }
 
         [HttpGet("{IDNV}")]
@@ -33,14 +79,15 @@ namespace VLFM.Controllers
 
             if (employeeDetails != null)
             {
-                return Ok(employeeDetails);
+                var responseData = new { data = employeeDetails };
+                return Ok(responseData);
             }
             else
             {
                 return BadRequest();
             }
         }
-
+            
         [HttpPost]
         public async Task<IActionResult> CreateEmployee(EmployeeDetails employeeDetails)
         {
@@ -56,7 +103,7 @@ namespace VLFM.Controllers
             }
         }
 
-        [HttpPut]
+        [HttpPost("{IDNV}")]
         public async Task<IActionResult> UpdateEmployee(EmployeeDetails employeeDetails)
         {
             if (employeeDetails != null)
@@ -74,10 +121,10 @@ namespace VLFM.Controllers
             }
         }
 
-        [HttpDelete("{IDNV}")]
-        public async Task<IActionResult> DeleteEmployee(int IDNV)
+        [HttpDelete]
+        public async Task<IActionResult> DeleteEmployee(List<EmployeeDetails> emps)
         {
-            var isEmployeeDeleted = await _employeeService.DeleteEmployee(IDNV);
+            var isEmployeeDeleted = await _employeeService.DeleteEmployee(emps);
 
             if (isEmployeeDeleted)
             {
@@ -88,5 +135,7 @@ namespace VLFM.Controllers
                 return BadRequest();
             }
         }
+
+
     }
 }

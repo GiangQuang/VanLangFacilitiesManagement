@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using VLFM.Core.Models;
+using VLFM.Core.Response;
 using VLFM.Services;
 using VLFM.Services.Interfaces;
 
 namespace VLFM.Controllers
 {
-    [Route("api/Receipt")]
+    [Route("api/receipt")]
     [ApiController]
     public class ReceiptsController : ControllerBase
     {
@@ -23,7 +24,49 @@ namespace VLFM.Controllers
             {
                 return NotFound();
             }
-            return Ok(DetailsList);
+            string ReceiptID = HttpContext.Request.Query.ContainsKey("ReceiptID") ? HttpContext.Request.Query["ReceiptID"].ToString() : null;
+            string Date = HttpContext.Request.Query.ContainsKey("Date") ? HttpContext.Request.Query["Date"].ToString() : null;
+            string EmployeeID = HttpContext.Request.Query.ContainsKey("EmployeeID") ? HttpContext.Request.Query["EmployeeID"].ToString() : null;
+            string ProviderID = HttpContext.Request.Query.ContainsKey("ProviderID") ? HttpContext.Request.Query["ProviderID"].ToString() : null;
+            string Receiptcode = HttpContext.Request.Query.ContainsKey("Receiptcode") ? HttpContext.Request.Query["Receiptcode"].ToString() : null;
+            string Note = HttpContext.Request.Query.ContainsKey("Note") ? HttpContext.Request.Query["Note"].ToString() : null;
+            
+            if (!string.IsNullOrEmpty(ReceiptID))
+            {
+                DetailsList = DetailsList.Where(r => r.ReceiptID.Contains(ReceiptID, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+            if (!string.IsNullOrEmpty(Date))
+            {
+                DateTime parsedDate;
+                if (DateTime.TryParse(Date, out parsedDate))
+                {
+                    DetailsList = DetailsList.Where(r => r.Date == parsedDate).ToList();
+                }
+            }
+            if (!string.IsNullOrEmpty(EmployeeID))
+            {
+                DetailsList = DetailsList.Where(r => r.EmployeeID.ToString().Contains(EmployeeID, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+            
+            if (!string.IsNullOrEmpty(ProviderID))
+            {
+                DetailsList = DetailsList.Where(r => r.ProviderID.Contains(ProviderID, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+            if (!string.IsNullOrEmpty(Receiptcode))
+            {
+                DetailsList = DetailsList.Where(r => r.Receiptcode.Contains(Receiptcode, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+            if (!string.IsNullOrEmpty(Note))
+            {
+                DetailsList = DetailsList.Where(r => r.Note.Contains(Note, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
+            var responseData = new
+            {
+                data = DetailsList,
+            };
+
+            return Ok(responseData);
         }
 
 
@@ -34,7 +77,8 @@ namespace VLFM.Controllers
 
             if (receiptDetails != null)
             {
-                return Ok(receiptDetails);
+                var responseData = new { data = receiptDetails };
+                return Ok(responseData);
             }
             else
             {
@@ -57,7 +101,7 @@ namespace VLFM.Controllers
             }
         }
 
-        [HttpPut]
+        [HttpPost("{Id}")]
         public async Task<IActionResult> UpdateReceipt(ReceiptDetails receiptDetails)
         {
             if (receiptDetails != null)
@@ -75,10 +119,10 @@ namespace VLFM.Controllers
             }
         }
 
-        [HttpDelete("{Id}")]
-        public async Task<IActionResult> DeleteReceipt(int Id)
+        [HttpDelete]
+        public async Task<IActionResult> DeleteReceipt(List<ReceiptResponse> rec)
         {
-            var isReceiptDeleted = await _receiptService.DeleteReceipt(Id);
+            var isReceiptDeleted = await _receiptService.DeleteReceipt(rec);
 
             if (isReceiptDeleted)
             {

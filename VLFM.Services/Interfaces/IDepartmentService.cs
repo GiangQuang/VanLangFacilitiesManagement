@@ -14,6 +14,6 @@ namespace VLFM.Services.Interfaces
         Task<IEnumerable<DepartmentResponse>> GetAllDepartments();
         Task<DepartmentResponse> GetDepartmentById(int Id);
         Task<bool> UpdateDepartment(DepartmentDetails departmentDetails);
-        Task<bool> DeleteDepartment(int Id);
+        Task<bool> DeleteDepartment(List<DepartmentResponse> depts);
     }
 }

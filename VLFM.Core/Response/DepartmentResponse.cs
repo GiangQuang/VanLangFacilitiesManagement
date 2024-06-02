@@ -10,7 +10,7 @@ namespace VLFM.Core.Response
     {
         public int Id { get; set; }
         public string DeptID { get; set; }
-        public object BranchID { get; set; }
+        public string BranchID { get; set; }
         public string Deptname { get; set; }
         public string Note { get; set; }
     }

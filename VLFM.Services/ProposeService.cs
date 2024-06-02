@@ -20,7 +20,6 @@ namespace VLFM.Services
         {
             if (proposeDetails != null)
             {
-                proposeDetails.ProposeID = GenerateProposeID();
                 await _unitOfWork.Proposes.Add(proposeDetails);
                 var result = _unitOfWork.Save();
 
@@ -32,21 +31,24 @@ namespace VLFM.Services
             return false;
         }
 
-        public async Task<bool> DeletePropose(int Id)
+        public async Task<bool> DeletePropose(List<ProposeDetails> prop)
         {
-            if (Id > 0)
+            if (prop != null && prop.Any())
             {
-                var proposeDetails = await _unitOfWork.Proposes.GetById(Id);
-                if (proposeDetails != null)
+                foreach (var item in prop)
                 {
-                    _unitOfWork.Proposes.Delete(proposeDetails);
-                    var result = _unitOfWork.Save();
 
-                    if (result > 0)
-                        return true;
-                    else
-                        return false;
+                    var proposeDetails = await _unitOfWork.Proposes.GetById(item.Id);
+                    if (proposeDetails != null)
+                    {
+                        _unitOfWork.Proposes.Delete(proposeDetails);
+                    }
                 }
+                var result = _unitOfWork.Save();
+                if (result > 0)
+                    return true;
+                else
+                    return false;
             }
             return false;
         }
@@ -89,11 +91,6 @@ namespace VLFM.Services
                 }
             }
             return false;
-        }
-
-        private string GenerateProposeID()
-        {
-            return DateTime.Now.ToString("yyyyMMddHHmmss");
         }
     }
 }

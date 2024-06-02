@@ -21,7 +21,6 @@ namespace VLFM.Services
         {
             if (propertyTypeDetails != null)
             {
-                propertyTypeDetails.PropTypeID = GeneratePropTypeID();
                 await _unitOfWork.PropTypes.Add(propertyTypeDetails);
                 var result = _unitOfWork.Save();
 
@@ -33,21 +32,24 @@ namespace VLFM.Services
             return false;
         }
 
-        public async Task<bool> DeletePropType(int Id)
+        public async Task<bool> DeletePropType(List<PropertyTypeDetails> propties)
         {
-            if (Id > 0)
+            if (propties != null && propties.Any())
             {
-                var propertyTypeDetails = await _unitOfWork.PropTypes.GetById(Id);
-                if (propertyTypeDetails != null)
+                foreach (var item in propties)
                 {
-                    _unitOfWork.PropTypes.Delete(propertyTypeDetails);
-                    var result = _unitOfWork.Save();
 
-                    if (result > 0)
-                        return true;
-                    else
-                        return false;
+                    var propertyTypeDetails = await _unitOfWork.PropTypes.GetById(item.Id);
+                    if (propertyTypeDetails != null)
+                    {
+                        _unitOfWork.PropTypes.Delete(propertyTypeDetails);
+                    }
                 }
+                var result = _unitOfWork.Save();
+                if (result > 0)
+                    return true;
+                else
+                    return false;
             }
             return false;
         }
@@ -92,10 +94,6 @@ namespace VLFM.Services
                 }
             }
             return false;
-        }
-        private string GeneratePropTypeID()
-        {
-            return DateTime.Now.ToString("yyyyMMddHHmmss");
         }
     }
 }

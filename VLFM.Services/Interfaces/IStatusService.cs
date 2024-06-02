@@ -13,6 +13,6 @@ namespace VLFM.Services.Interfaces
         Task<IEnumerable<StatusDetails>> GetAllStatuses();
         Task<StatusDetails> GetStatusById(int Id);
         Task<bool> UpdateStatus(StatusDetails statusDetails);
-        Task<bool> DeleteStatus(int Id);
+        Task<bool> DeleteStatus(List<StatusDetails> sta);
     }
 }

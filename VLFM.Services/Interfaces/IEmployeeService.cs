@@ -13,6 +13,6 @@ namespace VLFM.Services.Interfaces
         Task<IEnumerable<EmployeeDetails>> GetAllEmployees();
         Task<EmployeeDetails> GetEmployeeById(int IDNV);
         Task<bool> UpdateEmployee(EmployeeDetails employeeDetails);
-        Task<bool> DeleteEmployee(int IDNV);
+        Task<bool> DeleteEmployee(List<EmployeeDetails> emps);
     }
 }
